@@ -41,20 +41,23 @@ fft_recurse(fmpz_t *out, const fmpz_t mod, int n, fmpz_t *roots, fmpz_t *ys,
 char *fft_interpolate(char *modIn, int nPoints, 
     char **rootsIn, char **pointsYin, bool invert)
 {
+
   fmpz_t mod;
   fmpz_init_from_gostr(mod, modIn);
 
-  fmpz_t ys[nPoints];
-  fmpz_t roots[nPoints];
+  fmpz_t *ys = (fmpz_t*)malloc(nPoints*sizeof(fmpz));
+  fmpz_t *roots = (fmpz_t*)malloc(nPoints*sizeof(fmpz));
   for (int i=0; i<nPoints; i++) {
     fmpz_init_from_gostr(roots[i], rootsIn[i]);
     fmpz_init_from_gostr(ys[i], pointsYin[i]);
-  } 
+  }
 
-  fmpz_t out[nPoints];
-  fmpz_t tmp[nPoints];
-  fmpz_t ySub[nPoints];
-  fmpz_t rootsSub[nPoints];
+  printf("Hey init\n");
+    
+  fmpz_t *out = (fmpz_t*)malloc(nPoints*sizeof(fmpz));
+  fmpz_t *tmp = (fmpz_t*)malloc(nPoints*sizeof(fmpz));
+  fmpz_t *ySub = (fmpz_t*)malloc(nPoints*sizeof(fmpz));
+  fmpz_t *rootsSub = (fmpz_t*)malloc(nPoints*sizeof(fmpz));
   for (int i=0; i<nPoints;i++) {
     fmpz_init(out[i]);
     fmpz_init(tmp[i]);
@@ -85,6 +88,13 @@ char *fft_interpolate(char *modIn, int nPoints,
     fmpz_clear(ySub[i]);
     fmpz_clear(rootsSub[i]);
   }
+
+  free(ys);
+  free(roots);
+
+  free(tmp);
+  free(ySub);
+  free(rootsSub);
 
   return fmpz_array_to_str(nPoints, out);
 }  
